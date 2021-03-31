@@ -35,10 +35,10 @@ from datamodel_code_generator import (
 from datamodel_code_generator.format import PythonVersion
 from datamodel_code_generator.model import DataModel, DataModelFieldBase
 from datamodel_code_generator.model.enum import Enum
-from datamodel_code_generator.model.schematics.base_model import SchematicsModelField
 from datamodel_code_generator.parser import DefaultPutDict, LiteralType
 
 from ..model import pydantic as pydantic_model
+from ..model.schematics import SchematicsModelField
 from ..parser.base import Parser
 from ..reference import Reference, is_url
 from ..types import DataType, DataTypeManager, StrictTypes, Types
@@ -313,7 +313,7 @@ class JsonSchemaParser(Parser):
 
     @property
     def is_using_schematics(self) -> bool:
-        return isinstance(self.data_model_field_type, SchematicsModelField)
+        return self.data_model_field_type is SchematicsModelField
 
     @root_id.setter
     def root_id(self, value: Optional[str]) -> None:
@@ -851,7 +851,8 @@ class JsonSchemaParser(Parser):
                 description=obj.description if self.use_schema_description else None,
             )
             self.append_result(enum)
-            return self.data_type(reference=reference)
+            foo = self.data_type(reference=reference, literals=enum_times)
+            return foo
 
         root_reference = self.model_resolver.add(
             path,
@@ -895,7 +896,7 @@ class JsonSchemaParser(Parser):
             path=self.current_source_path,
         )
         self.append_result(data_model_root_type)
-        return self.data_type(reference=root_reference)
+        return self.data_type(reference=root_reference, literals=enum_times)
 
     def _get_ref_body(self, resolved_ref: str) -> Dict[Any, Any]:
         if is_url(resolved_ref):

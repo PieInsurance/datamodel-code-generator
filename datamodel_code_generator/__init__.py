@@ -277,6 +277,7 @@ def generate(
             data_model_root_type=schematics_model.CustomRootType,
             data_type_manager_type=schematics_model.DataTypeManager,
             data_model_field_type=schematics_model.SchematicsModelField,
+            enum_model_type=schematics_model.SchematicsEnum
         )
 
     parser = parser_class(
